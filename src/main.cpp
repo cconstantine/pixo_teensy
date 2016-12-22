@@ -2,27 +2,20 @@
 
 extern "C" int main(void)
 {
-#ifdef USING_MAKEFILE
-
-	// To use Teensy 3.0 without Arduino, simply put your code here.
-	// For example:
-
 	pinMode(13, OUTPUT);
 	while (1) {
-		digitalWriteFast(13, HIGH);
-		delay(500);
-		digitalWriteFast(13, LOW);
-		delay(500);
-	}
+    static unsigned long lastTick = millis();
+    unsigned long now = millis();
+    if (lastTick + 1000 < now) {
+      Serial.write("Ping\n");
+      lastTick += 1000;
+      static bool high;
+      digitalWriteFast(13, (high = !high )? HIGH : LOW);
+    }
 
-
-#else
-	// Arduino's main() function just calls setup() and loop()....
-	setup();
-	while (1) {
-		loop();
 		yield();
 	}
-#endif
+
+
 }
 
